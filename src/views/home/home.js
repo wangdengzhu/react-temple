@@ -1,18 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types'
 import './home.scss';
 import { NavBar, Icon } from 'antd-mobile';
 import Bottom from '@/components/bottom/bottom';
+import { connect } from 'react-redux'
+import { saveUserInfo } from '@/redux/action'
 
-class App extends React.Component{
+class Home extends React.Component{
+  static propTypes = {
+    // userInfo: PropTypes.object.isRequired,
+    saveUserInfo: PropTypes.func.isRequired,
+  }
   componentDidMount(){
     console.log('loading complite')
   }
   leftClick(){
     console.log('onLeftClick1')
   }
-  handleAlert(){
-    alert('hahaha');
+  saveInfo = () => {
+    if(this.props.saveUserInfo){
+      this.props.saveUserInfo({name: 'rose', phone: '18028787540'})
+    }
   }
   render(){
     return (
@@ -29,12 +38,25 @@ class App extends React.Component{
         <div className="home-wrap">
           <Link to="/profile">to profile</Link>
         </div>
-        <div onClick={this.handleAlert}>
-          show alert
+
+        <div className="home-wrap" onClick={this.saveInfo}>
+          保存个人信息
         </div>
         <Bottom></Bottom>
       </div>
     );
   }
 }
-export default App;
+
+const mapStateToProps = (state) => {
+  return {
+    userInfo: state.userInfo
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

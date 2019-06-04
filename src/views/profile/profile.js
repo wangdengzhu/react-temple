@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { Component } from 'react';
+// import PropTypes from 'prop-types'
 import './profile.scss';
 import Bottom from '@/components/bottom/bottom';
+// import log from '@/components/log';
 import { List, InputItem, Toast } from 'antd-mobile';
+import { connect } from 'react-redux'
+import { saveUserInfo } from '@/redux/action'
 
-class App extends React.Component {
+class Profile extends Component {
+  // static propTypes = {
+  //   userInfo: PropTypes.object.isRequired,
+  //   saveUserInfo: PropTypes.func.isRequired,
+  // }
   constructor() {
     super();
     this.state = {
       hasError: !1,
-      value: ''
+      value: '',
+      color: '',
+      userInfo: {
+        name: '',
+        phone: ''
+      }
     }
+    // this.input = React.createRef();
   }
   onErrorClick = () => {
     if (this.state.hasError) {
@@ -30,6 +44,17 @@ class App extends React.Component {
       value,
     });
   }
+  focusText = (e) => {
+    
+  }
+  componentDidMount (){
+    if(this.props.userInfo){
+      this.setState({
+        userInfo: this.props.userInfo
+      })
+    }
+    
+  }
   render() {
     return (
       <div>
@@ -41,7 +66,7 @@ class App extends React.Component {
               error={this.state.hasError}
               onErrorClick={this.onErrorClick}
               onChange={this.onChange}
-              value={this.state.value}
+              value={this.state.userInfo.phone}
             >手机号码</InputItem>
           </List>
           <List>
@@ -54,10 +79,28 @@ class App extends React.Component {
               value={this.state.value}
             >密码</InputItem>
           </List>
+          <List onClick={() => {console.log(1111)}}>
+            <label htmlFor='labelInput'>name: </label>
+            <input id='labelInput' type='text' ref={input => this.input = input} value='hobby' onChange={this.onChange}/>
+            <input type='button' value='click' onClick={this.focusText} />
+          </List>
+          <div>{this.state.userInfo.name}</div>
         </div>
-        <Bottom></Bottom>
+        <Bottom color={this.state.color}></Bottom>
       </div>
     );
   }
 }
-export default App;
+
+const mapStateToProps = (state) => {
+  return {
+    userInfo: state.userInfo
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
